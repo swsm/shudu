@@ -1,6 +1,13 @@
 package com.broadtext.shudu.test5;
 import java.util.HashMap;
  
+/**
+ * 
+ * <p>ClassName: AddShuDu</p>
+ * <p>Description: 自己出题且自己解处所有答案</p>
+ * <p>Author: Administrator</p>
+ * <p>Date: 2017-3-7</p>
+ */
 public class AddShuDu {
     
     public static void  main(String[] args) {
@@ -134,6 +141,14 @@ public class AddShuDu {
                     ay = (int) (Math.random() * 9);
                 } while (te[ax][ay] == 0);
                 te[ax][ay] = 0;
+                int[][] data = {
+                        {0,0,0,0,0,0,0,0,0 }, { 0,0,0,0,0,0,0,6,9 },
+                        { 0,0,0,0,0,0,3,0,7 }, { 0,6,0,0,0,9,0,0,8 },
+                        { 0,0,5,0,0,4,0,7,0 }, { 0,0,7,1,0,8,0,4,3 },
+                        { 0,5,0,0,9,0,0,0,4 }, { 0,2,3,0,0,5,0,0,0},
+                        { 0,4,1,7,0,3,6,9,0 }   
+                };
+                te = data;
                 wnf = Wnf_(te);
             } while (what_jb(wnf) != jibie);// 不属于该级别继续挖洞
             System.out.print("jibei=" + wnf + " " );
