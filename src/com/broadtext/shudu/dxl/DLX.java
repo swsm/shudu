@@ -25,9 +25,9 @@ public class DLX {
         head.U = head.D = head.L = head.R = head;
         for (int i = 0; i < c; ++i) {
             col[i] = new DLXNode(r, i);
-            col[i].L = head;
-            col[i].R = head.R;
-            col[i].L.R = col[i].R.L = col[i];
+            col[i].R = head;
+            col[i].L = head.L;
+            col[i].R.L = col[i].L.R = col[i];
             col[i].U = col[i].D = col[i];
             size[i] = 0;
         }
