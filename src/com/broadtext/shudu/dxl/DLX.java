@@ -3,7 +3,7 @@ package com.broadtext.shudu.dxl;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DLX {  
+public class DLX {
     private static final int ROW = 4096 + 50;
     private static final int COL = 1024 + 50;
     private static final int N = 4 * 9 * 9;
@@ -19,13 +19,11 @@ public class DLX {
     int data[][] = new int[9][9];
     List<int[][]> solutions;
 
-    public DLX(int r, int c)
-    {
+    public DLX(int r, int c) {
         n = m * m;
         head = new DLXNode(r, c);
         head.U = head.D = head.L = head.R = head;
-        for (int i = 0; i < c; ++i)
-        {
+        for (int i = 0; i < c; ++i) {
             col[i] = new DLXNode(r, i);
             col[i].L = head;
             col[i].R = head.R;
@@ -33,9 +31,8 @@ public class DLX {
             col[i].U = col[i].D = col[i];
             size[i] = 0;
         }
-
-        for (int i = r - 1; i > -1; --i)
-        {
+        
+        for (int i = r - 1; i > -1; --i) {
             row[i] = new DLXNode(i, c);
             row[i].U = head;
             row[i].D = head.D;
@@ -44,8 +41,7 @@ public class DLX {
         }
     }
 
-    public void addNode(int r, int c)
-    {
+    public void addNode(int r, int c) {
         DLXNode p = new DLXNode(r, c);
         p.R = row[r];
         p.L = row[r].L;
@@ -56,33 +52,38 @@ public class DLX {
         ++size[c];
     }
 
-    public void addNode(int i, int j, int k)
-    {
+    public void addNode(int i, int j, int k) {
+        //计算所在行数
         int r = (i * n + j) * n + k;
+        //创建每个元素只能是1-9数字的限制条件对应的node
         addNode(r, i * n + k - 1);
+        //创建每行元素1-9不能重复的限制条件对应的node
         addNode(r, n * n + j * n + k - 1);
+        //创建每列元素1-9不能重复的限制条件对应的node
         addNode(r, 2 * n * n + block(i, j) * n + k - 1);
+        //创建每单元格元素1-9不能重复的限制条件对应的node
         addNode(r, 3 * n * n + i * n + j);
     }
 
-    int block(int x, int y)
-    {
+    int block(int x, int y) {
         return x / m * m + y / m;
     }
 
-    public void cover(int c)
-    {
+    /**
+     * 
+     * <p>Description: 删除选中列的所有元素(左右节点脱离关系)，删除所选元素所在行的所有元素的上下元素(上下节点脱离关系)</p>
+     * @param c
+     */
+    public void cover(int c) {
         if (c == N)
             return;
-
+        
         col[c].delLR();
         DLXNode R, C;
-        for (C = col[c].D; C != col[c]; C = C.D)
-        {
+        for (C = col[c].D; C != col[c]; C = C.D) {
             if (C.c == N)
                 continue;
-            for (R = C.L; R != C; R = R.L)
-            {
+            for (R = C.L; R != C; R = R.L) {
                 if (R.c == N)
                     continue;
                 --size[R.c];
@@ -92,19 +93,16 @@ public class DLX {
         }
     }
 
-    public void resume(int c)
-    {
+    public void resume(int c) {
         if (c == N)
             return;
 
         DLXNode R, C;
-        for (C = col[c].U; C != col[c]; C = C.U)
-        {
+        for (C = col[c].U; C != col[c]; C = C.U) {
             if (C.c == N)
                 continue;
             C.resumeLR();
-            for (R = C.R; R != C; R = R.R)
-            {
+            for (R = C.R; R != C; R = R.R) {
                 if (R.c == N)
                     continue;
                 ++size[R.c];
@@ -114,10 +112,8 @@ public class DLX {
         col[c].resumeLR();
     }
 
-    public boolean solve(int depth)
-    {
-        if (head.L == head)
-        {
+    public boolean solve(int depth) {
+        if (head.L == head) {
             int solution[][] = new int[n][n];
             for (int i = 0; i < n; ++i)
                 for (int j = 0; j < n; ++j)
@@ -131,20 +127,18 @@ public class DLX {
         int minSize = 1 << 30;
         int c = -1;
         DLXNode p;
+        //取一行中 每列对应size的最小值 
         for (p = head.L; p != head; p = p.L)
-            if (size[p.c] < minSize)
-            {
+            if (size[p.c] < minSize) {
                 minSize = size[p.c];
                 c = p.c;
             }
         cover(c);
 
-        for (p = col[c].D; p != col[c]; p = p.D)
-        {
+        for (p = col[c].D; p != col[c]; p = p.D) {
             DLXNode cell;
             p.R.L = p;
-            for (cell = p.L; cell != p; cell = cell.L)
-            {
+            for (cell = p.L; cell != p; cell = cell.L) {
                 cover(cell.c);
             }
             p.R.L = p.L;
@@ -163,64 +157,52 @@ public class DLX {
         return false;
     }
 
-    public boolean solve(int data[][])
-    {
+    public boolean solve(int data[][]) {
         init(data);
         return solve(0);
     }
 
-    public void init(int data[][])
-    {
+    public void init(int data[][]) {
         solutions = new ArrayList<int[][]>();
         int i, j, k;
         for (i = 0; i < n; ++i)
-            for (j = 0; j < n; ++j)
-            {
-                if (data[i][j] > 0)
-                {
+            for (j = 0; j < n; ++j) {
+                if (data[i][j] > 0) {
                     addNode(i, j, data[i][j]);
-                } else
-                {
+                } else {
                     for (k = 1; k <= n; ++k)
                         addNode(i, j, k);
                 }
             }
     }
 
-    public void setNum(int num)
-    {
+    public void setNum(int num) {
         this.num = num;
     }
 
-    public int getNum()
-    {
+    public int getNum() {
         return num;
     }
 
-    public List<int[][]> getSolutions()
-    {
+    public List<int[][]> getSolutions() {
         return solutions;
     }
 }
 
-class DLXNode
-{
-    int r,c;
-    DLXNode U,D,L,R;
-    
-    DLXNode()
-    {
+class DLXNode {
+    int r, c;
+    DLXNode U, D, L, R;
+
+    DLXNode() {
         r = c = 0;
     }
-    
-    DLXNode(int r, int c)
-    {
+
+    DLXNode(int r, int c) {
         this.r = r;
         this.c = c;
     }
 
-    DLXNode(int r, int c, DLXNode U, DLXNode D, DLXNode L, DLXNode R)
-    {
+    DLXNode(int r, int c, DLXNode U, DLXNode D, DLXNode L, DLXNode R) {
         this.r = r;
         this.c = c;
         this.U = U;
@@ -229,25 +211,21 @@ class DLXNode
         this.R = R;
     }
 
-    public void delLR()
-    {
+    public void delLR() {
         L.R = R;
         R.L = L;
     }
-    
-    public void delUD()
-    {
+
+    public void delUD() {
         U.D = D;
         D.U = U;
     }
-    
-    public void resumeLR()
-    {
+
+    public void resumeLR() {
         L.R = R.L = this;
     }
-    
-    public void resumeUD()
-    {
+
+    public void resumeUD() {
         U.D = D.U = this;
     }
 }
