@@ -191,13 +191,9 @@ public class DLX {
     }
 
     public boolean solve(String question) {
-        System.out.println("--开始设置空位点-" + System.currentTimeMillis());
         this.setEmptyPosition(question);
-        System.out.println("--空位点设置完毕，开始转数组---" + System.currentTimeMillis());
         this.setDataArray(question);
-        System.out.println("--数组转换完毕，开始建点---" + System.currentTimeMillis());
         init(data);
-        System.out.println("--建点完毕，开始求解---" + System.currentTimeMillis());
         return solve(0);
     }
 
